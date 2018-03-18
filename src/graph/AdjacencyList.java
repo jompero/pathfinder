@@ -23,6 +23,16 @@ public class AdjacencyList extends Graph {
 		}
 	}
 	
+	public String GetPath(Vertex a, Vertex b) {		
+		String path = b.toString();
+		Vertex current = b;
+		while (current != a && current != null) {
+			path += current.GetParent().toString();
+			current = current.GetParent();
+		}
+		return path;
+	}
+	
 	@Override
 	public Collection<? extends Point> GetPoints() {
 		return (Collection<? extends Point>) graph;
@@ -35,7 +45,7 @@ public class AdjacencyList extends Graph {
 
 	@Override
 	public Point[] GetChildren(Point point) {
-		return (Point[]) graph.toArray();
+		return GetPoint(point).GetChildren();
 	}
 
 	@Override
@@ -49,9 +59,8 @@ public class AdjacencyList extends Graph {
 	}
 
 	@Override
-	public void SetParent(Point c, Point current) {
-		// TODO Auto-generated method stub
-
+	public void SetParent(Point child, Point parent) {
+		GetPoint(child).SetParent(GetPoint(parent));
 	}
 
 	@Override
@@ -80,11 +89,10 @@ public class AdjacencyList extends Graph {
 	
 	@Override
 	public String toString() {
-		String toString = "[";
+		String toString = "Graph: ";
 		for (Vertex v : graph) {
 			toString += v.toString();
 		}
-		toString += "]";
-		return toString;	
+		return toString;
 	}
 }

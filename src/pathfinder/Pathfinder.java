@@ -13,10 +13,7 @@ public class Pathfinder {
 	* @Param 	end 	End point of the path (optional)
 	*/			
 	public void Dijkstra(Graph graph, Point start, Point end) {	
-		
-		//HashMap<Point, Integer> route = new HashMap<Point, Integer>();					// Initialize route
-		
-		
+
 		Collection<? extends Point> points = graph.GetPoints();
 		PriorityQueue<Point> queue = new PriorityQueue<Point>(points.size(), graph);	// Initialize queue
 		queue.addAll(points);

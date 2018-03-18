@@ -1,7 +1,10 @@
-package scene;
+package scenes;
+
+import java.awt.Point;
 
 import graph.AdjacencyList;
 import graph.Vertex;
+import pathfinder.Pathfinder;
 
 public class MainScene {
 	public static void main(String [] args) {
@@ -27,7 +30,11 @@ public class MainScene {
 		d.Connect(b, 5);
 		d.Connect(c, 4);
 		
-		System.out.println(a.toString());
-		System.out.print(al.toString());
+		al.AddPoint(a, b, c, d);
+		
+		Pathfinder pf = new Pathfinder();
+		pf.Dijkstra(al, c, d);
+		// TODO Debug why "b" doesn't work here
+		System.out.println(al.GetPath(d, c));
 	}
 }

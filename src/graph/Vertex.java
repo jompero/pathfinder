@@ -9,6 +9,7 @@ public class Vertex extends Point {
 	 */
 	private static final long serialVersionUID = 1L;
 
+	Vertex parent;							// Parent Vertex for Pathfinding purposes
 	HashMap<Vertex, Integer> children;
 	int cost;
 
@@ -20,6 +21,19 @@ public class Vertex extends Point {
 	
 	public void Connect(Vertex vertex, int cost) {
 		children.put(vertex, cost);
+	}
+	
+	public void SetParent(Vertex parent) {
+		this.parent = parent;
+	}
+	
+	public Vertex GetParent() {
+		return parent;
+	}
+	
+	public Vertex[] GetChildren() {
+		Vertex[] vArray = children.keySet().toArray(new Vertex[0]);
+		return vArray;
 	}
 	
 	public int GetWeight(Point point) {
@@ -37,6 +51,6 @@ public class Vertex extends Point {
 	@Override
 	public String toString() {
 		String toString = String.format("(%d, %d)", x, y);
-		return  toString;
+		return toString;
 	}
 }
