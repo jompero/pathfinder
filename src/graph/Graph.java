@@ -6,18 +6,20 @@ import java.util.Comparator;
 import java.util.Iterator;
 
 public abstract class Graph implements Iterable<Point>, Comparator<Point> {
-	
-	public abstract Collection<Point> GetPoints();
 
+	public abstract Collection<? extends Point> GetPoints();
+	
+	public abstract Point GetPoint(Point point);
+	
+	public abstract Point[] GetChildren(Point point);
+
+	public abstract int GetCost(Point point);
+	
 	public abstract void SetCost(Point p, int maxValue);
 
-	public abstract Point[] GetChildren(Point current);
+	public abstract int Costing(Point point, Point c);
 
-	public abstract int Costing(Point current, Point c);
-
-	public abstract int GetCost(Point current);
-
-	public abstract void SetParent(Point c, Point current);
+	public abstract void SetParent(Point c, Point point);
 	
 	@Override
 	public abstract Iterator<Point> iterator();

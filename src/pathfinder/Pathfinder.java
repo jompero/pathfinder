@@ -13,9 +13,11 @@ public class Pathfinder {
 	* @Param 	end 	End point of the path (optional)
 	*/			
 	public void Dijkstra(Graph graph, Point start, Point end) {	
-		Collection<Point> points = graph.GetPoints();
-			
-		Point[] route = new Point[0];													// Initialize route
+		
+		//HashMap<Point, Integer> route = new HashMap<Point, Integer>();					// Initialize route
+		
+		
+		Collection<? extends Point> points = graph.GetPoints();
 		PriorityQueue<Point> queue = new PriorityQueue<Point>(points.size(), graph);	// Initialize queue
 		queue.addAll(points);
 		for (Point p : points) {
@@ -29,8 +31,8 @@ public class Pathfinder {
 			Point[] children = graph.GetChildren(current);		// Get current point's children
 			for (Point c : children) {							// And loop through them
 				int costing = graph.Costing(current, c);
-				if (costing < graph.GetCost(c)) {			// And it's current cost is more expensive than proposed costing
-					graph.SetCost(c, costing);				// Set the costing as the new cost
+				if (costing < graph.GetCost(c)) {					// And it's current cost is more expensive than proposed costing
+					graph.SetCost(c, costing);					// Set the costing as the new cost
 					graph.SetParent(c, current);
 				}
 			}
