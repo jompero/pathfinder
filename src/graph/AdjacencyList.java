@@ -71,6 +71,7 @@ public class AdjacencyList extends Graph {
 
 	@Override
 	public int compare(Point arg0, Point arg1) {
+		//int result = 
 		if (GetPoint(arg0).GetCost() > GetPoint(arg1).GetCost()) {
 			return 0;
 		}

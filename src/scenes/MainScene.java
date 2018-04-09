@@ -33,8 +33,10 @@ public class MainScene {
 		al.AddPoint(a, b, c, d);
 		
 		Pathfinder pf = new Pathfinder();
-		pf.Dijkstra(al, c, d);
-		// TODO Debug why "b" doesn't work here
-		System.out.println(al.GetPath(d, c));
+		Point[] ps = pf.Dijkstra(al, c, b);
+		System.out.println("Result:");
+		for (Point p : ps) {
+			System.out.println(p);
+		}
 	}
 }
