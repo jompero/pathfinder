@@ -39,7 +39,7 @@ public class AdjacencyList extends Graph {
 	}
 
 	@Override
-	public void SetCost(Point p, int cost) {
+	public void SetCost(Point p, double cost) {
 		GetPoint(p).SetCost(cost);
 	}
 
@@ -49,12 +49,12 @@ public class AdjacencyList extends Graph {
 	}
 
 	@Override
-	public int Costing(Point current, Point c) {
+	public double Costing(Point current, Point c) {
 		return GetPoint(current).GetCost() + GetPoint(current).GetWeight(c);
 	}
 
 	@Override
-	public int GetCost(Point current) {
+	public double GetCost(Point current) {
 		return GetPoint(current).GetCost();
 	}
 
@@ -71,11 +71,15 @@ public class AdjacencyList extends Graph {
 
 	@Override
 	public int compare(Point arg0, Point arg1) {
-		//int result = 
-		if (GetPoint(arg0).GetCost() > GetPoint(arg1).GetCost()) {
+		double cost0 = GetPoint(arg0).GetCost();
+		double cost1 = GetPoint(arg1).GetCost();
+		
+		if (cost0 > cost1) {
+			return 1;
+		} else if (cost0 == cost1) {
 			return 0;
 		}
-		return 1;
+		return -1;
 	}
 
 	@Override

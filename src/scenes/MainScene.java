@@ -16,8 +16,8 @@ public class MainScene {
 		Vertex c = new Vertex(6,9);
 		Vertex d = new Vertex(4,5);
 		
-		a.Connect(b, 8);
-		a.Connect(d, 5);
+		a.Connect(b, 8.0);
+		a.Connect(d, 5f);
 		
 		b.Connect(a, 8);
 		b.Connect(d, 5);
@@ -33,7 +33,7 @@ public class MainScene {
 		al.AddPoint(a, b, c, d);
 		
 		Pathfinder pf = new Pathfinder();
-		Point[] ps = pf.Dijkstra(al, c, b);
+		Point[] ps = pf.Dijkstra(al, a, b);
 		System.out.println("Result:");
 		for (Point p : ps) {
 			System.out.println(p);

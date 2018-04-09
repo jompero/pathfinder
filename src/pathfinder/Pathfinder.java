@@ -19,24 +19,27 @@ public class Pathfinder {
 
 		Collection<? extends Point> points = graph.GetPoints();
 		PriorityQueue<Point> queue = new PriorityQueue<Point>(points.size(), graph);	// Initialize queue
+		for (Point p : points) {
+			graph.SetCost(p, Double.POSITIVE_INFINITY);
+		}
+		graph.SetCost(start, 0);
 		queue.addAll(points);
 		
 		HashMap<Point, Point> parent = new HashMap<Point, Point>();
 		parent.put(start, null);
 		
-		for (Point p : points) {
-			graph.SetCost(p, Integer.MAX_VALUE);
-		}
-		graph.SetCost(start, 0);
+		System.out.println(queue);
 		
 		while (!queue.isEmpty()) {
-			Point current = queue.remove();						// Get first item from queue
+			Point current = queue.poll();						// Get cheapest item from queue
+			System.out.println(String.format("Evaluating point %s at costs %s", current, graph.GetCost(current)));
 			if (current.equals(end)) break;						// Early break once the algorithm finds the end point
 			
 			Point[] children = graph.GetChildren(current);		// Get current point's children
 			for (Point c : children) {							// And loop through them
 				if (queue.contains(c)) {
-					int costing = graph.Costing(current, c);
+					double costing = graph.Costing(current, c);
+					System.out.println(String.format("Cost from point %s to %s is %s", current, c, costing));
 					if (costing < graph.GetCost(c)) {					// And if it's current cost is more expensive than proposed costing
 						graph.SetCost(c, costing);					// Set the costing as the new cost
 						parent.put(c, current);

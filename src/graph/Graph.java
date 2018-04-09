@@ -13,11 +13,11 @@ public abstract class Graph implements Iterable<Point>, Comparator<Point> {
 	
 	public abstract Point[] GetChildren(Point point);
 
-	public abstract int GetCost(Point point);
+	public abstract double GetCost(Point point);
 	
-	public abstract void SetCost(Point p, int maxValue);
+	public abstract void SetCost(Point p, double maxValue);
 
-	public abstract int Costing(Point point, Point c);
+	public abstract double Costing(Point point, Point c);
 
 	public abstract void SetParent(Point c, Point point);
 	

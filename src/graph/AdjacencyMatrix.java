@@ -16,7 +16,7 @@ public class AdjacencyMatrix extends Graph {
 	}
 
 	@Override
-	public void SetCost(Point p, int maxValue) {
+	public void SetCost(Point p, double maxValue) {
 		// TODO Auto-generated method stub
 
 	}
@@ -49,13 +49,13 @@ public class AdjacencyMatrix extends Graph {
 	}
 
 	@Override
-	public int Costing(Point current, Point c) {
+	public double Costing(Point current, Point c) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
-	public int GetCost(Point current) {
+	public double GetCost(Point current) {
 		// TODO Auto-generated method stub
 		return 0;
 	}

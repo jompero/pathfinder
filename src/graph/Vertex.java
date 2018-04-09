@@ -10,16 +10,16 @@ public class Vertex extends Point {
 	private static final long serialVersionUID = 1L;
 
 	Vertex parent;							// Parent Vertex for Pathfinding purposes
-	HashMap<Vertex, Integer> children;
-	int cost;
+	HashMap<Vertex, java.lang.Double> children;
+	double cost;
 
 	public Vertex(int x, int y) {
-		children = new HashMap<Vertex, Integer>();
+		children = new HashMap<Vertex, java.lang.Double>();
 		this.x = x;
 		this.y = y;
 	}
 	
-	public void Connect(Vertex vertex, int cost) {
+	public void Connect(Vertex vertex, double cost) {
 		children.put(vertex, cost);
 	}
 	
@@ -36,15 +36,15 @@ public class Vertex extends Point {
 		return vArray;
 	}
 	
-	public int GetWeight(Point point) {
+	public double GetWeight(Point point) {
 		return children.get(point);
 	}
 	
-	public int GetCost() {
+	public double GetCost() {
 		return cost;
 	}
 	
-	public void SetCost(int cost) {
+	public void SetCost(double cost) {
 		this.cost = cost;
 	}
 	
@@ -53,4 +53,5 @@ public class Vertex extends Point {
 		String toString = String.format("(%d, %d)", x, y);
 		return toString;
 	}
+
 }
