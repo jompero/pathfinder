@@ -1,28 +1,24 @@
 package graph;
 
 import java.awt.Point;
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.Iterator;
 
-public abstract class Graph implements Iterable<Point>, Comparator<Point> {
+public abstract class Graph implements Comparator<Point> {
 
-	public abstract Collection<? extends Point> GetPoints();
+	public abstract ArrayList<? extends Point> getPoints();
 	
-	public abstract Point GetPoint(Point point);
+	public abstract Point getPoint(Point point);
 	
-	public abstract Point[] GetChildren(Point point);
+	public abstract Point[] getChildren(Point point);
 
-	public abstract double GetCost(Point point);
+	public abstract double getCost(Point point);
 	
-	public abstract void SetCost(Point p, double maxValue);
+	public abstract void setCost(Point p, double maxValue);
 
-	public abstract double Costing(Point point, Point c);
+	public abstract double costing(Point point, Point c);
 
-	public abstract void SetParent(Point c, Point point);
-	
-	@Override
-	public abstract Iterator<Point> iterator();
+	public abstract void setParent(Point c, Point point);
 	
 	@Override
 	public abstract int compare(Point arg0, Point arg1);

@@ -2,10 +2,9 @@ package graph;
 
 import java.awt.Point;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
 
-public class AdjacencyList extends Graph {
+public class AdjacencyList extends Graph implements Iterable<Vertex> {
 	
 	ArrayList<Vertex> graph;
 	
@@ -17,13 +16,13 @@ public class AdjacencyList extends Graph {
 		graph = new ArrayList<Vertex>();
 	}
 
-	public void AddPoint(Vertex... vertices) {
+	public void addPoint(Vertex... vertices) {
 		for (Vertex v : vertices) {
 			graph.add(v);
 		}
 	}
 	
-	public String GetPath(Vertex a, Vertex b) {		
+	public String getPath(Vertex a, Vertex b) {		
 		String path = b.toString();
 		Vertex current = b;
 		while (current != a && current != null) {
@@ -34,45 +33,44 @@ public class AdjacencyList extends Graph {
 	}
 	
 	@Override
-	public Collection<? extends Point> GetPoints() {
-		return (Collection<? extends Point>) graph;
+	public ArrayList<Vertex> getPoints() {
+		return graph;
 	}
 
 	@Override
-	public void SetCost(Point p, double cost) {
-		GetPoint(p).SetCost(cost);
+	public void setCost(Point p, double cost) {
+		getPoint(p).SetCost(cost);
 	}
 
 	@Override
-	public Point[] GetChildren(Point point) {
-		return GetPoint(point).GetChildren();
+	public Point[] getChildren(Point point) {
+		return getPoint(point).GetChildren();
 	}
 
 	@Override
-	public double Costing(Point current, Point c) {
-		return GetPoint(current).GetCost() + GetPoint(current).GetWeight(c);
+	public double costing(Point current, Point c) {
+		return getPoint(current).GetCost() + getPoint(current).GetWeight(c);
 	}
 
 	@Override
-	public double GetCost(Point current) {
-		return GetPoint(current).GetCost();
+	public double getCost(Point current) {
+		return getPoint(current).GetCost();
 	}
 
 	@Override
-	public void SetParent(Point child, Point parent) {
-		GetPoint(child).SetParent(GetPoint(parent));
+	public void setParent(Point child, Point parent) {
+		getPoint(child).SetParent(getPoint(parent));
 	}
 
 	@Override
-	public Iterator<Point> iterator() {
-		// TODO Auto-generated method stub
-		return null;
+	public Iterator<Vertex> iterator() {
+		return graph.iterator();
 	}
 
 	@Override
 	public int compare(Point arg0, Point arg1) {
-		double cost0 = GetPoint(arg0).GetCost();
-		double cost1 = GetPoint(arg1).GetCost();
+		double cost0 = getPoint(arg0).GetCost();
+		double cost1 = getPoint(arg1).GetCost();
 		
 		if (cost0 > cost1) {
 			return 1;
@@ -83,7 +81,7 @@ public class AdjacencyList extends Graph {
 	}
 
 	@Override
-	public Vertex GetPoint(Point point) {
+	public Vertex getPoint(Point point) {
 		for (Vertex v : graph) {
 			if (v.equals(point)) {
 				return v;

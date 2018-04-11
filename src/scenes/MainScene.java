@@ -1,42 +1,181 @@
 package scenes;
 
 import java.awt.Point;
+import java.util.ArrayList;
 
 import graph.AdjacencyList;
 import graph.Vertex;
 import pathfinder.Pathfinder;
+import javafx.application.Application;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.scene.Group;
+import javafx.scene.Scene;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.Toggle;
+import javafx.scene.control.ToggleGroup;
+import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Line;
+import javafx.stage.Stage;
 
-public class MainScene {
-	public static void main(String [] args) {
-		// Prepare graph
+public class MainScene extends Application {
+	AdjacencyList graph;
+	ArrayList<Vertex> vertices;
+	
+	// Minimum and maximum edges per vertex on creation (can be more if another vertex wants to connect to one with max)
+	int minEdges = 1;
+	int maxEdges = 2;
+	
+	// To hold the radio buttons for event handling
+	ToggleGroup tg;
+	
+	// Store last clicked 2 Points
+	Point prevPoint;
+	Point currentPoint;
+	
+	//  Group to be updated with Dijkstra result
+	Pane pane;
+	Group result;
+	
+	// The offset to draw edges to center of RadioButtons instead of top left
+	int rbOffset = 8;
+	
+	
+	
+    @Override
+    public void start(Stage stage) throws Exception {
+        // Create random graph to start with
+    	randomGraph();
+    	drawGraph();
+        Group g = new Group();
+        g.getChildren().add(pane);
+    	Scene scene = new Scene(g, Color.BLACK);
+
+        stage.setTitle("Dijkstra"); 
+        stage.setFullScreen(true); 
+        stage.setScene(scene);
+        stage.show(); 
+    }
+
+    public static void main(String[] args) {
+        Application.launch(args);
+    }
+    
+    void randomGraph() {
+    	// Graph
 		AdjacencyList al = new AdjacencyList();
-		// Add some points
-		Vertex a = new Vertex(1,1);
-		Vertex b = new Vertex(1,9);
-		Vertex c = new Vertex(6,9);
-		Vertex d = new Vertex(4,5);
 		
-		a.Connect(b, 8.0);
-		a.Connect(d, 5f);
-		
-		b.Connect(a, 8);
-		b.Connect(d, 5);
-		b.Connect(c, 5);
-		
-		c.Connect(b, 5);
-		c.Connect(d, 4);
-		
-		d.Connect(a, 5);
-		d.Connect(b, 5);
-		d.Connect(c, 4);
-		
-		al.AddPoint(a, b, c, d);
-		
-		Pathfinder pf = new Pathfinder();
-		Point[] ps = pf.Dijkstra(al, a, b);
-		System.out.println("Result:");
-		for (Point p : ps) {
-			System.out.println(p);
+		// Add 100 points to graph
+		for (int i = 0; i < 15; i++) {
+			for (int j = 0; j < 15; j++) {
+				int x = (int) (Math.random() * 70 + i * 100);
+				int y = (int) (Math.random() * 70 + j * 70);
+				Vertex a = new Vertex(x, y);
+				al.addPoint(a);
+			}
 		}
+		// Connect all vertices to 1-4 others
+		vertices = al.getPoints();
+		int vSize = vertices.size();
+		for (int i = 0; i < vSize; i++) {
+			for (int j = (int) (Math.random() * maxEdges + minEdges); j > 0; j--) {
+				int connectTo = (int) (Math.random() * (vSize - 1));
+				
+				if (connectTo == i) connectTo = (connectTo + 1) % vSize;
+
+				double cost = vertices.get(i).distance(vertices.get(connectTo));
+				vertices.get(i).Connect(vertices.get(connectTo), cost);
+				vertices.get(connectTo).Connect(vertices.get(i), cost);
+			}
+		}
+		graph = al;
+		
+		// Predefine a random path to draw
+		prevPoint = vertices.get((int) (Math.random() * vertices.size()));
+		currentPoint = vertices.get((int) (Math.random() * vertices.size()));
+    }
+	
+    // Draw the graph generated
+	void drawGraph() {
+		pane = new Pane();
+		
+		Group edges = edges();
+		result = drawDijkstra();
+		Group rbuttons = radioButtons();
+		
+		pane.getChildren().addAll(edges, result, rbuttons);
+		result.toBack();
+		edges.toBack();
+	}
+	
+	Group radioButtons() {
+		// Draw created vertices on Pane as Radio Buttons
+		// The radio buttons serve as UI to select next destination
+		Group buttons = new Group();
+		tg = new ToggleGroup();
+		
+		for (Point parent : graph) {			
+			RadioButton btn = new RadioButton(parent.toString());
+			btn.setLayoutX(parent.getX());
+			btn.setLayoutY(parent.getY());
+			btn.setUserData(parent);
+			btn.setToggleGroup(tg);
+			buttons.getChildren().add(btn);
+		}
+		
+	    tg.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+	    	@Override
+	    	public void changed(ObservableValue<? extends Toggle> ov, Toggle old_toggle, Toggle new_toggle) {
+	    		if (tg.getSelectedToggle() != null) {
+	    			prevPoint = currentPoint;
+					currentPoint = (Point) tg.getSelectedToggle().getUserData();
+					System.out.println(String.format("Running points %s and %s through Dijkstra's algorithm", prevPoint, currentPoint));
+					result = drawDijkstra();
+	    		}
+	        }
+	    });
+		
+		return buttons;
+	}
+	
+	Group edges() {
+		// Display edges between vertices as grey lines
+		Group edges = new Group();
+		
+		for (Point parent : graph) {
+			for (Point child : graph.getPoint(parent).GetChildren()) {
+				Line edge = new Line();
+				edge.setStroke(Color.rgb(26, 26, 26));
+				edge.setStrokeWidth(0.5);
+				edge.setStartX(parent.getX() + rbOffset);
+				edge.setStartY(parent.getY() + rbOffset);
+				edge.setEndX(child.getX() + rbOffset);
+				edge.setEndY(child.getY() + rbOffset);
+				edges.getChildren().add(edge);
+			}			
+		}
+		return edges;
+	}
+	
+	Group drawDijkstra() {
+		// Use Dijkstra to calculate path
+		Point[] dijkstra = Pathfinder.dijkstra(graph, prevPoint, currentPoint);
+		
+		// Display path generated by Dijkstra as yellow lines
+		Group path = new Group();
+		
+		for (int i = 0; i < dijkstra.length - 1; i++) {
+			Line line = new Line();
+			line.setStroke(Color.YELLOW);
+			line.setStrokeWidth(2);
+			line.setStartX(dijkstra[i].getX() + rbOffset);
+			line.setStartY(dijkstra[i].getY() + rbOffset);
+			line.setEndX(dijkstra[i+1].getX() + rbOffset);
+			line.setEndY(dijkstra[i+1].getY() + rbOffset);
+			path.getChildren().add(line);
+		}
+		
+		return path;
 	}
 }

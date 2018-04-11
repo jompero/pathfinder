@@ -2,27 +2,25 @@ package graph;
 
 import java.awt.Point;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
 
 public class AdjacencyMatrix extends Graph {
 	
 	int[][] graph;
 
 	@Override
-	public Collection<? extends Point> GetPoints() {
+	public ArrayList<Point> getPoints() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public void SetCost(Point p, double maxValue) {
+	public void setCost(Point p, double maxValue) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public Point[] GetChildren(Point point) {
+	public Point[] getChildren(Point point) {
 		int x = point.x;
 		int y = point.y;
 		int maxX = graph.length;
@@ -49,27 +47,21 @@ public class AdjacencyMatrix extends Graph {
 	}
 
 	@Override
-	public double Costing(Point current, Point c) {
+	public double costing(Point current, Point c) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
-	public double GetCost(Point current) {
+	public double getCost(Point current) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
-	public void SetParent(Point c, Point current) {
+	public void setParent(Point c, Point current) {
 		// TODO Auto-generated method stub
 
-	}
-
-	@Override
-	public Iterator<Point> iterator() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	@Override
@@ -79,7 +71,7 @@ public class AdjacencyMatrix extends Graph {
 	}
 
 	@Override
-	public Point GetPoint(Point point) {
+	public Point getPoint(Point point) {
 		// TODO Auto-generated method stub
 		return null;
 	}
