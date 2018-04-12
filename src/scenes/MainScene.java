@@ -36,7 +36,9 @@ public class MainScene extends Application {
 	
 	//  Group to be updated with Dijkstra result
 	Pane pane;
+	Group edges;
 	Group result;
+	Group rbuttons;
 	
 	// The offset to draw edges to center of RadioButtons instead of top left
 	int rbOffset = 8;
@@ -97,16 +99,22 @@ public class MainScene extends Application {
     }
 	
     // Draw the graph generated
-	void drawGraph() {
+	void drawGraph() {	
 		pane = new Pane();
 		
-		Group edges = edges();
+		edges = edges();
 		result = drawDijkstra();
-		Group rbuttons = radioButtons();
+		rbuttons = radioButtons();
 		
 		pane.getChildren().addAll(edges, result, rbuttons);
 		result.toBack();
 		edges.toBack();
+	}
+	
+	void refreshGraph() {
+		pane.getChildren().remove(result);
+		result = drawDijkstra();
+		pane.getChildren().add(pane.getChildren().indexOf(rbuttons), result);
 	}
 	
 	Group radioButtons() {
@@ -131,7 +139,7 @@ public class MainScene extends Application {
 	    			prevPoint = currentPoint;
 					currentPoint = (Point) tg.getSelectedToggle().getUserData();
 					System.out.println(String.format("Running points %s and %s through Dijkstra's algorithm", prevPoint, currentPoint));
-					result = drawDijkstra();
+					refreshGraph();
 	    		}
 	        }
 	    });
