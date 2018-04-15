@@ -7,22 +7,32 @@ import graph.AdjacencyList;
 import graph.Vertex;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.EventHandler;
 import javafx.scene.Group;
-import javafx.scene.Scene;
+import javafx.scene.Node;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
-import javafx.stage.Stage;
 import pathfinder.Pathfinder;
 
-public class GraphUI extends Stage {
+public class GraphUI extends Pane {
 	// Graph
 	AdjacencyList graph;
+	
+	// Scaling for zoom in and out
+	double scale = 1;
+	// Mouse drag delta and origin on screen for mouse drag event
+	double x;
+	double y;
+	double deltaX;
+	double deltaY;
 	
 	// Background image
 	Image image;
@@ -35,7 +45,7 @@ public class GraphUI extends Stage {
 	Point currentPoint;
 	
 	//  Group to be updated with Dijkstra result
-	Pane pane;
+	ImageView background;
 	Group edges;
 	Group result;
 	Group rbuttons;
@@ -44,42 +54,86 @@ public class GraphUI extends Stage {
 	int rbOffset = 8;
 	
     public GraphUI(AdjacencyList graph) {
-    		this.graph = graph;
-    		
-    		// Initialize global variables
-    		pane = new Pane();
-    		
-    		// Predefine a random path to draw
-    		ArrayList<Vertex> vertices = graph.getPoints();
-    		prevPoint = vertices.get((int) (Math.random() * vertices.size()));
-    		currentPoint = vertices.get((int) (Math.random() * vertices.size()));
+		// Initialize ImageView
+    	background = new ImageView();
     	
-    		// Create random graph to start with
-    		drawGraph();
-        Group g = new Group();
-        g.getChildren().add(pane);
-        Scene scene = new Scene(g, Color.BLACK);
+    	this.graph = graph;
+		
+		// Predefine a random path to draw
+		ArrayList<Vertex> vertices = graph.getPoints();
+		prevPoint = vertices.get((int) (Math.random() * vertices.size()));
+		currentPoint = vertices.get((int) (Math.random() * vertices.size()));
+	
+		// Create random graph to start with
+		drawGraph();
+		
+		// Setup for mouse drag event (scene moving)
+		this.setOnMousePressed(new EventHandler<MouseEvent>() {
 
-        setTitle("Dijkstra"); 
-        setFullScreen(true); 
-        setScene(scene);
-        show(); 
+			@Override
+			public void handle(MouseEvent event) {
+			    x = event.getSceneX();
+			    y = event.getSceneY();
+			}
+			
+		});
+		
+		// Scene moving mouse drag event
+		this.setOnMouseDragged(new EventHandler<MouseEvent>() {
+
+			@Override
+			public void handle(MouseEvent event) {
+				
+				Node node = (Node) event.getSource();
+				deltaX = event.getSceneX() - x;
+				deltaY = event.getSceneY() - y;
+
+	            node.setTranslateX(node.getTranslateX() + deltaX * 0.001);
+	            node.setTranslateY(node.getTranslateY() + deltaY * 0.001);
+			}
+			
+		});
+		
+		// Zoom effect on scroll
+		this.setOnScroll(new EventHandler<ScrollEvent>() {
+			@Override
+			public void handle(ScrollEvent event) {
+				scale = scale + event.getDeltaY() * 0.001;
+				drawGraph();
+			}
+		});
     }
     
+    // Set a background image for the graph
     public void setImage(Image image) {
     	this.image = image;
     	drawGraph();
     }
     
-    // Draw the graph given
+    // Draw the graph
 	void drawGraph() {	
-		pane.getChildren().clear();
+		getChildren().clear();
 		
-		edges = edges();
+		if (image != null) background = drawBG();
+		edges = drawEdges();
 		result = drawDijkstra();
 		rbuttons = radioButtons();
 		
-		pane.getChildren().addAll(edges, new ImageView(image), result, rbuttons);
+		getChildren().addAll(edges, background, result, rbuttons);
+	}
+	
+	void refreshPath() {
+		getChildren().remove(result);
+		result = drawDijkstra();
+		getChildren().add(getChildren().indexOf(rbuttons), result);
+	}
+	
+	ImageView drawBG() {
+		if (image == null) return null;
+		ImageView img = new ImageView(image);
+		img.setPreserveRatio(true);
+		img.setFitHeight(image.getHeight() * scale);
+		return img;
 	}
 	
 	Group radioButtons() {
@@ -90,8 +144,9 @@ public class GraphUI extends Stage {
 		
 		for (Point parent : graph) {			
 			RadioButton btn = new RadioButton(parent.toString());
-			btn.setLayoutX(parent.getX());
-			btn.setLayoutY(parent.getY());
+			
+			btn.setLayoutX(parent.getX() * scale - rbOffset);
+			btn.setLayoutY(parent.getY() * scale - rbOffset);
 			btn.setUserData(parent);
 			btn.setToggleGroup(tg);
 			buttons.getChildren().add(btn);
@@ -104,7 +159,7 @@ public class GraphUI extends Stage {
 	    			prevPoint = currentPoint;
 					currentPoint = (Point) tg.getSelectedToggle().getUserData();
 					System.out.println(String.format("Running points %s and %s through Dijkstra's algorithm", prevPoint, currentPoint));
-					drawGraph();
+					refreshPath();
 	    		}
 	        }
 	    });
@@ -112,7 +167,7 @@ public class GraphUI extends Stage {
 		return buttons;
 	}
 	
-	Group edges() {
+	Group drawEdges() {
 		// Display edges between vertices as grey lines
 		Group edges = new Group();
 		
@@ -120,11 +175,11 @@ public class GraphUI extends Stage {
 			for (Point child : graph.getPoint(parent).GetChildren()) {
 				Line edge = new Line();
 				edge.setStroke(Color.rgb(45, 45, 45));
-				edge.setStrokeWidth(0.5);
-				edge.setStartX(parent.getX() + rbOffset);
-				edge.setStartY(parent.getY() + rbOffset);
-				edge.setEndX(child.getX() + rbOffset);
-				edge.setEndY(child.getY() + rbOffset);
+				edge.setStrokeWidth(0.3);
+				edge.setStartX(parent.getX() * scale);
+				edge.setStartY(parent.getY() * scale);
+				edge.setEndX(child.getX() * scale);
+				edge.setEndY(child.getY() * scale);
 				edges.getChildren().add(edge);
 			}			
 		}
@@ -140,12 +195,12 @@ public class GraphUI extends Stage {
 		
 		for (int i = 0; i < dijkstra.length - 1; i++) {
 			Line line = new Line();
-			line.setStroke(Color.YELLOW);
-			line.setStrokeWidth(2);
-			line.setStartX(dijkstra[i].getX() + rbOffset);
-			line.setStartY(dijkstra[i].getY() + rbOffset);
-			line.setEndX(dijkstra[i+1].getX() + rbOffset);
-			line.setEndY(dijkstra[i+1].getY() + rbOffset);
+			line.setStroke(Color.BLUE);
+			line.setStrokeWidth(4);
+			line.setStartX(dijkstra[i].getX() * scale);
+			line.setStartY(dijkstra[i].getY() * scale);
+			line.setEndX(dijkstra[i+1].getX() * scale);
+			line.setEndY(dijkstra[i+1].getY() * scale);
 			path.getChildren().add(line);
 		}
 		

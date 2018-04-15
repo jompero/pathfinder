@@ -1,4 +1,3 @@
-package scenes;
 import javafx.application.Application;
 import javafx.geometry.Side;
 import javafx.scene.Group;
@@ -14,7 +13,7 @@ import scenes.BasicGraph;
 import scenes.GraphUI;
 import scenes.MapDemo;
 
-public class MainScene extends Application {
+public class Main extends Application {
 	String imageSrc = "turkumap.png";
 	
     @Override

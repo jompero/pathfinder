@@ -14,6 +14,7 @@ import org.json.simple.parser.JSONParser;
 
 public class MapDemo extends AdjacencyList {
 	
+	String filename = "/src/resources/mapdata.json";
 	
 	public MapDemo() {
 		jsonToGraph();
@@ -24,7 +25,7 @@ public class MapDemo extends AdjacencyList {
 		
 		// Location of JSON file that contains the map data
 		String absPath = new File("").getAbsolutePath();
-		String jsonPath = absPath.concat("/src/resources/mapdata.json");
+		String jsonPath = absPath.concat(filename);
 
 		// Parse the file and create necessary objects to define the graph
 		JSONParser parser = new JSONParser();
