@@ -2,11 +2,12 @@ package graph;
 
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 
 public class AdjacencyList extends Graph implements Iterable<Vertex> {
 	
-	ArrayList<Vertex> graph;
+	protected ArrayList<Vertex> graph;
 	
 	
 	/**
@@ -19,6 +20,12 @@ public class AdjacencyList extends Graph implements Iterable<Vertex> {
 	public void addPoint(Vertex... vertices) {
 		for (Vertex v : vertices) {
 			graph.add(v);
+		}
+	}
+	
+	public void addAllPoints(Collection<Vertex> points) {
+		for (Vertex v : points) {
+			addPoint(v);
 		}
 	}
 	

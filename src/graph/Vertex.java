@@ -12,11 +12,22 @@ public class Vertex extends Point {
 	Vertex parent;							// Parent Vertex for Pathfinding purposes
 	HashMap<Vertex, java.lang.Double> children;
 	double cost;
+	
+	public Vertex() {
+		super();
+		children = new HashMap<Vertex, java.lang.Double>();
+	}
 
 	public Vertex(int x, int y) {
 		children = new HashMap<Vertex, java.lang.Double>();
 		this.x = x;
 		this.y = y;
+	}
+	
+	public Vertex(Point p) {
+		children = new HashMap<Vertex, java.lang.Double>();
+		this.x = (int) p.getX();
+		this.y = (int) p.getY();
 	}
 	
 	public void Connect(Vertex vertex, double cost) {

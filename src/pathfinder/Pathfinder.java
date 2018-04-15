@@ -24,7 +24,7 @@ public class Pathfinder {
 			graph.setCost(p, Double.POSITIVE_INFINITY);
 		}
 		graph.setCost(start, 0);
-		queue.add(start);
+		queue.add(graph.getPoint(start));
 		
 		ArrayList<Point> visited = new ArrayList<Point>();
 		HashMap<Point, Point> parent = new HashMap<Point, Point>();
@@ -37,7 +37,7 @@ public class Pathfinder {
 			Point current = queue.poll();
 			visited.add(current);
 			System.out.println(String.format("Evaluating point %s at cost %s", current, graph.getCost(current)));
-			if (current.equals(end)) break;
+			if (current.equals(graph.getPoint(end))) break;
 			
 			// Loop through current point's children. Calculate the cost to visit them if they have not been visited already. 
 			// If new cost is cheaper than their current cost, update it.
@@ -63,7 +63,7 @@ public class Pathfinder {
 		
 		// Work out the answer to algorithm by going through the parents (parent HashMap) of each vertex starting from the end Point
 		ArrayList<Point> shortestPath = new ArrayList<Point>();
-		Point last = end;
+		Point last = graph.getPoint(end);
 		shortestPath.add(last);
 		while (!start.equals(last)) {
 			last = parent.get(last);
